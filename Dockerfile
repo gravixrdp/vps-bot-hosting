@@ -26,4 +26,4 @@ RUN echo '[]' > allowlist.json && \
     echo '{}' > users.json
 
 # Run the bot
-CMD ["python", "bot.py"]
+CMD ["python", "main.py"]
