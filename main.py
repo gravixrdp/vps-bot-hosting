@@ -36,7 +36,7 @@ log = logging.getLogger("hostbot")
 # =========================
 # Config
 # =========================
-BOT_TOKEN = "8318430595:AAFtbJVxIbHIQxtmNwZPgXx68wnhVJuDuhk"  # <-- replace
+BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 
 OWNERS = {5610858626}  # Owner IDs
 
@@ -162,17 +162,17 @@ def make_home_keyboard(uid: int) -> ReplyKeyboardMarkup:
     ]
     if is_owner(uid):
         rows.append([KeyboardButton("🛠️ Admin Panel")])
-    return ReplyKeyboardMarkup(rows, resize_keyboard=True, is_persistent=True)
+    return ReplyKeyboardMarkup(rows, resize_keyboard=True)
 
 def make_shell_keyboard(uid: int) -> ReplyKeyboardMarkup:
     rows = [
         [KeyboardButton("⚡ Run Common Cmds"), KeyboardButton("📘 All Linux Commands")],
         [KeyboardButton("🛑 Shell End"), KeyboardButton("🆘 Help"), KeyboardButton("⭐ Premium Status")]
     ]
-    return ReplyKeyboardMarkup(rows, resize_keyboard=True, is_persistent=True)
+    return ReplyKeyboardMarkup(rows, resize_keyboard=True)
 
 def make_unauth_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup([[KeyboardButton("📇 My ID")]], resize_keyboard=True, is_persistent=True)
+    return ReplyKeyboardMarkup([[KeyboardButton("📇 My ID")]], resize_keyboard=True)
 
 # ---------- Utils ----------
 def _safe_nano_cpus(cpus: float) -> int:
