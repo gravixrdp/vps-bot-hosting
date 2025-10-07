@@ -36,7 +36,7 @@ log = logging.getLogger("hostbot")
 # =========================
 # Config
 # =========================
-BOT_TOKEN = "8318430595:AAFtbJVxIbHIQxtmNwZPgXx68wnhVJuDuhk"  # <-- replace
+BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 
 OWNERS = {5610858626}  # Owner IDs
 
@@ -221,7 +221,7 @@ def _root_of(name: str) -> str | None:
     name = name.strip()
     if not name:
         return None
-    return name.split(".", 1)
+    return name.split(".", 1)[0]
 
 def detect_requirements(py_text: str) -> list[str]:
     ast_found: set[str] = set()
@@ -380,8 +380,8 @@ async def allow_add_entry(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args or []
     if args:
         try:
-            new_id = int(args)
-        except ValueError:
+            new_id = int(args[0])
+        except (ValueError, IndexError):
             await update.message.reply_text("Usage: /allow_add <user_id>", reply_markup=make_home_keyboard(uid), parse_mode=None)
             return ConversationHandler.END
         ALLOW.add(new_id); save_allowlist(ALLOW)
@@ -415,8 +415,8 @@ async def allow_remove_entry(update: Update, context: ContextTypes.DEFAULT_TYPE)
     args = context.args or []
     if args:
         try:
-            rem = int(args)
-        except ValueError:
+            rem = int(args[0])
+        except (ValueError, IndexError):
             await update.message.reply_text("Usage: /allow_remove <user_id>", reply_markup=make_home_keyboard(uid), parse_mode=None)
             return ConversationHandler.END
         if rem in OWNERS:
@@ -463,8 +463,8 @@ async def set_premium_entry(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args or []
     if len(args) >= 2:
         try:
-            target = int(args); days = int(args[4])
-        except ValueError:
+            target = int(args[0]); days = int(args[1])
+        except (ValueError, IndexError):
             await update.message.reply_text("Usage: /set_premium <user_id> <days>", reply_markup=make_home_keyboard(uid), parse_mode=None)
             return ConversationHandler.END
         exp = time.time() + days * 86400
