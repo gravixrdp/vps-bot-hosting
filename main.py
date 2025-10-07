@@ -162,17 +162,17 @@ def make_home_keyboard(uid: int) -> ReplyKeyboardMarkup:
     ]
     if is_owner(uid):
         rows.append([KeyboardButton("🛠️ Admin Panel")])
-    return ReplyKeyboardMarkup(rows, resize_keyboard=True, is_persistent=True)
+    return ReplyKeyboardMarkup(rows, resize_keyboard=True)
 
 def make_shell_keyboard(uid: int) -> ReplyKeyboardMarkup:
     rows = [
         [KeyboardButton("⚡ Run Common Cmds"), KeyboardButton("📘 All Linux Commands")],
         [KeyboardButton("🛑 Shell End"), KeyboardButton("🆘 Help"), KeyboardButton("⭐ Premium Status")]
     ]
-    return ReplyKeyboardMarkup(rows, resize_keyboard=True, is_persistent=True)
+    return ReplyKeyboardMarkup(rows, resize_keyboard=True)
 
 def make_unauth_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup([[KeyboardButton("📇 My ID")]], resize_keyboard=True, is_persistent=True)
+    return ReplyKeyboardMarkup([[KeyboardButton("📇 My ID")]], resize_keyboard=True)
 
 # ---------- Utils ----------
 def _safe_nano_cpus(cpus: float) -> int:
@@ -221,7 +221,7 @@ def _root_of(name: str) -> str | None:
     name = name.strip()
     if not name:
         return None
-    return name.split(".", 1)[0]
+    return name.split(".", 1)
 
 def detect_requirements(py_text: str) -> list[str]:
     ast_found: set[str] = set()
@@ -380,8 +380,8 @@ async def allow_add_entry(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args or []
     if args:
         try:
-            new_id = int(args[0])
-        except (ValueError, IndexError):
+            new_id = int(args)
+        except ValueError:
             await update.message.reply_text("Usage: /allow_add <user_id>", reply_markup=make_home_keyboard(uid), parse_mode=None)
             return ConversationHandler.END
         ALLOW.add(new_id); save_allowlist(ALLOW)
@@ -415,8 +415,8 @@ async def allow_remove_entry(update: Update, context: ContextTypes.DEFAULT_TYPE)
     args = context.args or []
     if args:
         try:
-            rem = int(args[0])
-        except (ValueError, IndexError):
+            rem = int(args)
+        except ValueError:
             await update.message.reply_text("Usage: /allow_remove <user_id>", reply_markup=make_home_keyboard(uid), parse_mode=None)
             return ConversationHandler.END
         if rem in OWNERS:
@@ -463,8 +463,8 @@ async def set_premium_entry(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args or []
     if len(args) >= 2:
         try:
-            target = int(args[0]); days = int(args[1])
-        except (ValueError, IndexError):
+            target = int(args); days = int(args[4])
+        except ValueError:
             await update.message.reply_text("Usage: /set_premium <user_id> <days>", reply_markup=make_home_keyboard(uid), parse_mode=None)
             return ConversationHandler.END
         exp = time.time() + days * 86400
